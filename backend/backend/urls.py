@@ -19,12 +19,14 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from movies.views import MovieViewSet
 
-
 router = DefaultRouter()
-router.register(r'movies', MovieViewSet)  # Для стандартных операций CRUD
+router.register(r'movies', MovieViewSet, basename='movies')  # Добавьте basename
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
-    path('api/movies/filter/', MovieViewSet.as_view({'get': 'filtered'}), name='filter-movies'),
+    # Явно регистрируем кастомный action отдельным path
+    path('api/movies/filter/',
+         MovieViewSet.as_view({'get': 'filtered'}),
+         name='movies-filter'),
 ]

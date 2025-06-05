@@ -8,15 +8,16 @@ const HomePage = () => {
 
 const handleSearch = async () => {
   try {
-    // Кодируем параметры для URL
-    const encodedGenre = encodeURIComponent(genre);
-    const response = await api.get(
-      `movies/filter/?genre=${encodedGenre}&min_rating=${minRating}`
-    );
+    const response = await api.get(`movies/filter/`, {
+      params: {
+        genre: genre,
+        min_rating: minRating
+      }
+    });
+    console.log("Полный ответ:", response);
     setMovies(response.data);
-    console.log("Полученные данные:", response.data);
   } catch (error) {
-    console.error("Ошибка при загрузке фильмов:", error);
+    console.error("Полная ошибка:", error);
   }
 };
 
