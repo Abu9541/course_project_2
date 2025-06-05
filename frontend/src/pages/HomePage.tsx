@@ -1,51 +1,61 @@
 import { useState } from 'react';
-import api from "../services/api";
+import { getFilteredMovies } from '@services/movieService';
+import MovieCard from '@components/MovieCard/MovieCard';
+import styles from './HomePage.module.css';
+import {Movie} from "@services/types";
 
 const HomePage = () => {
   const [genre, setGenre] = useState<string>('');
-  const [minRating, setMinRating] = useState<number>(7.0);
-  const [movies, setMovies] = useState<any[]>([]);
+  const [minRating, setMinRating] = useState<number>(5.0);
+  const [movies, setMovies] = useState<Movie[]>([]);
 
-const handleSearch = async () => {
-  try {
-    const response = await api.get(`movies/filter/`, {
-      params: {
-        genre: genre,
-        min_rating: minRating
-      }
-    });
-    console.log("Полный ответ:", response);
-    setMovies(response.data);
-  } catch (error) {
-    console.error("Полная ошибка:", error);
-  }
-};
+  const handleSearch = async () => {
+    try {
+      const data = await getFilteredMovies(genre, minRating);
+      setMovies(data);
+    } catch (error) {
+      console.error("Ошибка:", error);
+    }
+  };
 
   return (
-    <div>
-      <h1>Поиск фильмов</h1>
-      <select onChange={(e) => setGenre(e.target.value)}>
-        <option value="">Все жанры</option>
-        <option value="Драма">Драма</option>
-        <option value="Комедия">Комедия</option>
-      </select>
-      <input
-        type="range"
-        min="0"
-        max="10"
-        step="0.1"
-        value={minRating}
-        onChange={(e) => setMinRating(parseFloat(e.target.value))}
-      />
-      <span>Рейтинг: {minRating.toFixed(1)}+</span>
-      <button onClick={handleSearch}>Найти</button>
-      <div>
+    <div className={styles.container}>
+      <div className={styles.filters}>
+        <select
+          value={genre}
+          onChange={(e) => setGenre(e.target.value)}
+          className={styles.select}
+        >
+          <option value="">Все жанры</option>
+          <option value="Драма">Драма</option>
+          <option value="Комедия">Комедия</option>
+        </select>
+
+        <div className={styles.ratingFilter}>
+          <input
+            type="range"
+            min="0"
+            max="10"
+            step="0.1"
+            value={minRating}
+            onChange={(e) => setMinRating(parseFloat(e.target.value))}
+            className={styles.slider}
+          />
+          <span>Рейтинг: {minRating.toFixed(1)}+</span>
+        </div>
+
+        <button onClick={handleSearch} className={styles.button}>
+          Найти
+        </button>
+      </div>
+
+      <div className={styles.moviesGrid}>
         {movies.map((movie) => (
-          <div key={movie.id}>
-            <h3>{movie.title}</h3>
-            <p>Рейтинг: {movie.vote_average}</p>
-            <p>Жанры: {movie.genres.join(', ')}</p>
-          </div>
+          <MovieCard
+            key={movie.id}
+            movie={movie}
+            onClick={() => console.log('Selected:', movie.title)}
+          />
         ))}
       </div>
     </div>
