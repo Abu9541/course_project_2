@@ -1,0 +1,57 @@
+import requests
+from django.conf import settings
+from .models import Movie
+
+
+def fetch_popular_movies():
+    # Проверка существования таблицы
+    from django.db import connection
+    if 'movies_movie' not in connection.introspection.table_names():
+        raise Exception("Таблица movies_movie не существует. Выполните миграции!")
+    # 1. Получаем список всех жанров из TMDB
+    genres_url = f"https://api.themoviedb.org/3/genre/movie/list?api_key={settings.TMDB_API_KEY}&language=ru-RU"
+    genres_response = requests.get(genres_url)
+    genres_data = genres_response.json()
+    genre_dict = {g['id']: g['name'] for g in genres_data['genres']}
+
+    # 2. Получаем популярные фильмы
+    movies_url = f"https://api.themoviedb.org/3/movie/popular?api_key={settings.TMDB_API_KEY}&language=ru-RU&page=1"
+
+    try:
+        movies_response = requests.get(movies_url)
+        movies_response.raise_for_status()
+        movies_data = movies_response.json()
+    except Exception as e:
+        print(f"Ошибка при получении фильмов: {e}")
+        return
+
+    # 3. Для каждого фильма получаем полную информацию (чтобы получить жанры)
+    for movie_data in movies_data['results']:
+        try:
+            # Получаем детальную информацию о фильме
+            movie_detail_url = f"https://api.themoviedb.org/3/movie/{movie_data['id']}?api_key={settings.TMDB_API_KEY}&language=ru-RU"
+            detail_response = requests.get(movie_detail_url)
+            detail_data = detail_response.json()
+
+            # Преобразуем жанры в список названий
+            genres = [genre_dict[g['id']] for g in detail_data.get('genres', [])]
+
+            # Создаем или обновляем фильм
+            Movie.objects.update_or_create(
+                tmdb_id=movie_data['id'],
+                defaults={
+                    'title': movie_data['title'],
+                    'overview': movie_data['overview'],
+                    'release_date': movie_data['release_date'][:4] if movie_data['release_date'] else None,
+                    'poster_path': f"https://image.tmdb.org/t/p/w500{movie_data['poster_path']}" if movie_data[
+                        'poster_path'] else None,
+                    'vote_average': movie_data['vote_average'],
+                    'genres': genres  # Сохраняем список жанров
+                }
+            )
+
+        except Exception as e:
+            print(f"Ошибка при обработке фильма {movie_data['title']}: {e}")
+            continue
+
+    print(f"Успешно обновлено {len(movies_data['results'])} фильмов!")
