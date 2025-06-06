@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getFilteredMovies } from '@services/movieService';
+import { getFilteredMovies, getMovies } from '@services/movieService'; // Импортируем getMovies
 import MovieCard from '@components/MovieCard/MovieCard';
 import { FiltersPanel } from '@components/FiltersPanel/FiltersPanel';
 import { AuthModal } from '@components/AuthModal/AuthModal';
@@ -22,38 +22,42 @@ const HomePage = () => {
   const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
   const [availableGenres, setAvailableGenres] = useState<string[]>([]);
 
-  // Загружаем список уникальных жанров при монтировании
+  // Загружаем список фильмов и жанров при монтировании
   useEffect(() => {
-    const fetchGenres = async () => {
+    const fetchInitialData = async () => {
       try {
-        const response = await api.get('/api/movies/');
-        const allGenres = response.data.flatMap((movie: Movie) => movie.genres);
-        setAvailableGenres(Array.from(new Set(allGenres))); // Исправлено здесь
+        // Загружаем все фильмы
+        const moviesResponse = await getMovies();
+        setMovies(moviesResponse);
+
+        // Загружаем уникальные жанры
+        const allGenres = moviesResponse.flatMap((movie: Movie) => movie.genres);
+        setAvailableGenres(Array.from(new Set(allGenres)));
       } catch (error) {
-        console.error('Ошибка загрузки жанров:', error);
+        console.error('Ошибка загрузки данных:', error);
       }
     };
 
-    fetchGenres();
+    fetchInitialData();
   }, []);
 
   const handleApplyFilters = async (filters: {
-  genres: string[];
-  minRating: number;
-  year?: string
-}) => {
-  try {
-    const params = new URLSearchParams();
-    filters.genres.forEach(g => params.append('genre', g));
-    params.append('min_rating', filters.minRating.toString());
-    if (filters.year) params.append('year', filters.year);
+    genres: string[];
+    minRating: number;
+    year?: string
+  }) => {
+    try {
+      const params = new URLSearchParams();
+      filters.genres.forEach(g => params.append('genre', g));
+      params.append('min_rating', filters.minRating.toString());
+      if (filters.year) params.append('year', filters.year);
 
-    const data = await getFilteredMovies(params.toString());
-    setMovies(data);
-  } catch (error) {
-    console.error('Ошибка фильтрации:', error);
-  }
-};
+      const data = await getFilteredMovies(params.toString());
+      setMovies(data);
+    } catch (error) {
+      console.error('Ошибка фильтрации:', error);
+    }
+  };
 
   const handleLogout = () => {
     localStorage.removeItem('token');
