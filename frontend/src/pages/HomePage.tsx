@@ -1,10 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { getFilteredMovies } from '@services/movieService';
 import MovieCard from '@components/MovieCard/MovieCard';
-import styles from './HomePage.module.css';
-import { Movie } from '@services/types';
+import { FiltersPanel } from '@components/FiltersPanel/FiltersPanel';
 import { AuthModal } from '@components/AuthModal/AuthModal';
 import { withAuth } from '@hocs/withAuth';
+import api from '@services/api';
+import styles from './HomePage.module.css';
+import { Movie } from '@services/types';
 
 const ProtectedContent = withAuth(({ user }) => {
   return (
@@ -15,20 +17,43 @@ const ProtectedContent = withAuth(({ user }) => {
 });
 
 const HomePage = () => {
-  const [genre, setGenre] = useState<string>('');
-  const [minRating, setMinRating] = useState<number>(5.0);
   const [movies, setMovies] = useState<Movie[]>([]);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
+  const [availableGenres, setAvailableGenres] = useState<string[]>([]);
 
-  const handleSearch = async () => {
-    try {
-      const data = await getFilteredMovies(genre, minRating);
-      setMovies(data);
-    } catch (error) {
-      console.error('Ошибка:', error);
-    }
-  };
+  // Загружаем список уникальных жанров при монтировании
+  useEffect(() => {
+    const fetchGenres = async () => {
+      try {
+        const response = await api.get('/api/movies/');
+        const allGenres = response.data.flatMap((movie: Movie) => movie.genres);
+        setAvailableGenres(Array.from(new Set(allGenres))); // Исправлено здесь
+      } catch (error) {
+        console.error('Ошибка загрузки жанров:', error);
+      }
+    };
+
+    fetchGenres();
+  }, []);
+
+  const handleApplyFilters = async (filters: {
+  genres: string[];
+  minRating: number;
+  year?: string
+}) => {
+  try {
+    const params = new URLSearchParams();
+    filters.genres.forEach(g => params.append('genre', g));
+    params.append('min_rating', filters.minRating.toString());
+    if (filters.year) params.append('year', filters.year);
+
+    const data = await getFilteredMovies(params.toString());
+    setMovies(data);
+  } catch (error) {
+    console.error('Ошибка фильтрации:', error);
+  }
+};
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -47,71 +72,59 @@ const HomePage = () => {
   };
 
   return (
-      <div className={styles.container}>
-        <div className={styles.header}>
+    <div className={styles.container}>
+      <FiltersPanel
+        onApply={handleApplyFilters}
+        availableGenres={availableGenres}
+      />
+
+      <div className={styles.content}>
+        <header className={styles.header}>
           {localStorage.getItem('token') ? (
-              <button onClick={handleLogout} className={styles.authButton}>
+            <div className={styles.authSection}>
+              <ProtectedContent />
+              <button onClick={handleLogout} className={styles.authButtonClose}>
                 Выйти
               </button>
+            </div>
           ) : (
-              <div className={styles.authButtons}>
-                <button onClick={openLogin} className={styles.authButton}>
-                  Вход
-                </button>
-                <button onClick={openRegister} className={styles.authButton}>
-                  Регистрация
-                </button>
-              </div>
+            <div className={styles.authSection}>
+              <span className={styles.userPanel}>Уже есть аккаунт? </span>
+              <button onClick={openLogin} className={styles.authButton}>
+                Войдите
+              </button>
+              <span className={styles.userPanel}>Ещё нет? Тогда самое время</span>
+              <button onClick={openRegister} className={styles.authButton}>
+                Зарегистрироваться
+              </button>
+            </div>
           )}
-          <ProtectedContent/>
-        </div>
-
-        <div className={styles.filters}>
-          <select
-              value={genre}
-              onChange={(e) => setGenre(e.target.value)}
-              className={styles.select}
-          >
-            <option value="">Все жанры</option>
-            <option value="Драма">Драма</option>
-            <option value="Комедия">Комедия</option>
-          </select>
-
-          <div className={styles.ratingFilter}>
-            <input
-                type="range"
-                min="0"
-                max="10"
-                step="0.1"
-                value={minRating}
-                onChange={(e) => setMinRating(parseFloat(e.target.value))}
-                className={styles.slider}
-            />
-            <span>Рейтинг: {minRating.toFixed(1)}+</span>
-          </div>
-
-          <button onClick={handleSearch} className={styles.button}>
-            Найти
-          </button>
-        </div>
+        </header>
 
         <div className={styles.moviesGrid}>
           {movies.map((movie) => (
-              <MovieCard
-                  key={movie.id}
-                  movie={movie}
-                  onClick={() => console.log('Selected:', movie.title)}
-              />
+            <MovieCard
+              key={movie.id}
+              movie={movie}
+              onClick={() => console.log('Selected:', movie.title)}
+            />
           ))}
         </div>
 
-        {showAuthModal && (
-            <AuthModal
-                initialMode={authMode}
-                onClose={() => setShowAuthModal(false)}
-            />
+        {movies.length === 0 && (
+          <div className={styles.noResults}>
+            Фильмы не найдены. Измените параметры фильтрации.
+          </div>
         )}
       </div>
+
+      {showAuthModal && (
+        <AuthModal
+          initialMode={authMode}
+          onClose={() => setShowAuthModal(false)}
+        />
+      )}
+    </div>
   );
 };
 

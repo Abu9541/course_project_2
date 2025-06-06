@@ -5,7 +5,7 @@ export const getMovies = async () => {
   return response.data;
 };
 
-export const getFilteredMovies = async (genre: string, minRating: number) => {
-  const response = await api.get(`api/movies/filter/?genre=${genre}&min_rating=${minRating}`);
+export const getFilteredMovies = async (params: string) => {
+  const response = await api.get(`api/movies/filter/?${params}`);
   return response.data;
 };

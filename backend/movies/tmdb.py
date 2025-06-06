@@ -39,10 +39,10 @@ def fetch_popular_movies():
             # Создаем или обновляем фильм
             Movie.objects.update_or_create(
                 tmdb_id=movie_data['id'],
+                release_date=detail_data.get('release_date'),
                 defaults={
                     'title': movie_data['title'],
                     'overview': movie_data['overview'],
-                    'release_date': movie_data['release_date'][:4] if movie_data['release_date'] else None,
                     'poster_path': f"https://image.tmdb.org/t/p/w500{movie_data['poster_path']}" if movie_data[
                         'poster_path'] else None,
                     'vote_average': movie_data['vote_average'],

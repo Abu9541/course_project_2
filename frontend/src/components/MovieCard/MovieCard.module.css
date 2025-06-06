@@ -1,5 +1,6 @@
 .card {
   background: #2c3e50;
+  border: 1px solid #e94560;
   border-radius: 10px;
   overflow: hidden;
   cursor: pointer;

@@ -1,0 +1,52 @@
+.panel {
+  width: 200px;
+  height: 100vh;
+  padding: 20px;
+  background: #0f3460;
+  color: white;
+  border-left: 1px solid #e94560;
+  position: fixed;
+  right: 0;
+  top: 60px;
+  overflow-y: auto;
+}
+
+.section {
+  margin-bottom: 20px;
+}
+
+.headings {
+  color: #e94560;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.checkboxLabel {
+  display: block;
+  margin: 5px 0;
+  cursor: pointer;
+}
+
+.input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.button {
+  width: 100%;
+  padding: 10px;
+  background: #e94560;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.button:hover {
+  background: #e94590;
+}
+
+.slider {
+  width: 100%;
+}

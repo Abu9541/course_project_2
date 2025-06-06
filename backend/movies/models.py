@@ -7,11 +7,11 @@ class Movie(models.Model):
     title = models.CharField(max_length=200)
     overview = models.TextField()
     poster_path = models.CharField(max_length=200, null=True, blank=True)
-    release_date = models.CharField(max_length=10)  # Формат: "YYYY-MM-DD"
-    vote_average = models.FloatField(verbose_name="Rating")  # Основное поле для рейтинга
-    genres = models.JSONField(default=list)  # Пример: ["Драма", "Криминал"]
+    release_date = models.CharField(max_length=10)
+    vote_average = models.FloatField(verbose_name="Rating")
+    genres = models.JSONField(default=list)
 
-    # Добавляем свойство для совместимости (если нужно обращаться как movie.rating)
+
     @property
     def rating(self):
         return self.vote_average

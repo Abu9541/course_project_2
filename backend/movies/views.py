@@ -17,13 +17,18 @@ class MovieViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['get'], url_path='filter')  # Явно указываем url_path
     def filtered(self, request):
         print("Фильтрация работает!")  # Для отладки
+        year = request.query_params.get('year')
         genre = request.query_params.get('genre', '').lower()
         min_rating = float(request.query_params.get('min_rating', 0))
+        genres = request.query_params.getlist('genres')
 
         queryset = self.get_queryset()
 
         if genre:
             queryset = [m for m in queryset if genre in [g.lower() for g in m.genres]]
+
+        if year:
+            queryset = [m for m in queryset if year in m.release_date]
 
         queryset = [m for m in queryset if m.vote_average >= min_rating]
 

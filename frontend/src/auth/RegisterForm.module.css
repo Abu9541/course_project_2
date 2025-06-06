@@ -3,11 +3,12 @@
   justify-content: center;
   align-items: center;
   min-height: 80vh;
-  background-color: #f5f5f5;
+  background: #1a1a2e;
 }
 
 .registerForm {
-  background: white;
+  background: #16213e;
+  color: white;
   padding: 2rem;
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -19,7 +20,7 @@
 .title {
   text-align: center;
   margin-bottom: 1.5rem;
-  color: #333;
+  color: white;
 }
 
 .formGroup {
@@ -33,17 +34,23 @@
 }
 
 .input {
-  width: 100%;
+  width: 92.5%;
   padding: 0.75rem;
-  border: 1px solid #ddd;
+  border: 1px solid #e94560;
   border-radius: 4px;
   font-size: 1rem;
+  background: #0f3460;
+  color: white;
+}
+
+.input::placeholder {
+  color: white;
 }
 
 .submitButton {
   width: 100%;
   padding: 0.75rem;
-  background-color: #28a745; /* Зеленый для регистрации */
+  background: #e94560;
   color: white;
   border: none;
   border-radius: 4px;
@@ -53,7 +60,9 @@
 }
 
 .submitButton:hover {
-  background-color: #218838;
+  background-color: #e94590;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
 
 .error {
