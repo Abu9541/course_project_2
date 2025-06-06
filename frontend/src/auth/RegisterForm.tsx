@@ -34,16 +34,6 @@ export const RegisterForm = ({
   return (
     <div className={styles.registerContainer}>
       <form onSubmit={handleSubmit} className={styles.registerForm}>
-        {onClose && (
-          <button
-            type="button"
-            onClick={onClose}
-            className={styles.closeButton}
-            aria-label="Закрыть"
-          >
-            ×
-          </button>
-        )}
         <h2 className={styles.title}>Регистрация</h2>
         {errorMessage && <div className={styles.error}>{errorMessage}</div>}
         <div className={styles.formGroup}>
@@ -71,16 +61,6 @@ export const RegisterForm = ({
         <button type="submit" className={styles.submitButton}>
           Зарегистрироваться
         </button>
-        <p className={styles.switchText}>
-          Уже есть аккаунт?{' '}
-          <button
-            type="button"
-            onClick={onSwitchToLogin}
-            className={styles.switchButton}
-          >
-            Войти
-          </button>
-        </p>
       </form>
     </div>
   );

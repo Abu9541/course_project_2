@@ -43,43 +43,46 @@ export const AuthModal = ({ initialMode = 'login', onClose }: AuthModalProps) =>
     <div className={styles.modalOverlay}>
       <div className={styles.modalContent}>
         {mode === 'login' ? (
-          <>
-            <LoginForm
-              onSuccess={onClose}
-              onLogin={handleLogin}
-              error={error}
-            />
-            <div className={styles.switchText}>
-              Нет аккаунта?{' '}
-              <button
-                onClick={() => setMode('register')}
-                className={styles.switchButton}
-              >
-                Зарегистрироваться
+            <>
+              <LoginForm
+                  onSuccess={onClose}
+                  onLogin={handleLogin}
+                  error={error}
+              />
+              <button onClick={onClose} className={styles.closeButton}>
+                Закрыть
               </button>
-            </div>
-          </>
+              <div className={styles.switchText}>
+                Нет аккаунта?{' '}
+                <button
+                    onClick={() => setMode('register')}
+                    className={styles.switchButton}
+                >
+                  Зарегистрироваться
+                </button>
+              </div>
+            </>
         ) : (
-          <>
-            <RegisterForm
-              onRegister={handleRegister}
-              onSwitchToLogin={() => setMode('login')}
-              error={error}
-            />
-            <div className={styles.switchText}>
-              Уже есть аккаунт?{' '}
-              <button
-                onClick={() => setMode('login')}
-                className={styles.switchButton}
-              >
-                Войти
+            <>
+              <RegisterForm
+                  onRegister={handleRegister}
+                  onSwitchToLogin={() => setMode('login')}
+                  error={error}
+              />
+              <button onClick={onClose} className={styles.closeButton}>
+                Закрыть
               </button>
-            </div>
-          </>
+              <div className={styles.switchText}>
+                Уже есть аккаунт?{' '}
+                <button
+                    onClick={() => setMode('login')}
+                    className={styles.switchButton}
+                >
+                  Войти
+                </button>
+              </div>
+            </>
         )}
-        <button onClick={onClose} className={styles.closeButton}>
-          Закрыть
-        </button>
       </div>
     </div>
   );

@@ -47,16 +47,6 @@ export const LoginForm = ({ onSuccess, onLogin, onClose, error: propError }: Log
   return (
     <div className={styles.loginContainer}>
     <form onSubmit={handleSubmit} className={styles.loginForm}>
-      {onClose && (
-        <button
-          type="button"
-          onClick={onClose}
-          className={styles.closeButton}
-          aria-label="Закрыть"
-        >
-          ×
-        </button>
-      )}
         <h2 className={styles.title}>Вход</h2>
 
         <div className={styles.formGroup}>

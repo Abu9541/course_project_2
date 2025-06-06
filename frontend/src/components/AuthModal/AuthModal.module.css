@@ -17,16 +17,34 @@
   border-radius: 8px;
   width: 100%;
   max-width: 400px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
-
-.switchButton:hover {
-  text-decoration: underline;
+.closeButton {
+  order: 3;
+  margin: 10px 0;
+  padding: 8px 20px;
+  background: #c4e3f3;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  align-self: center;
+  width: 100%;
+  max-width: 200px;
 }
 
 .switchText {
-  margin-top: 15px;
+  order: 2;
+  margin-top: 0;
   text-align: center;
+}
+
+.switchButton:hover {
+  text-decoration: underline;
 }
 
 .switchButton {
@@ -38,12 +56,6 @@
   text-decoration: underline;
 }
 
-.closeButton {
-  display: block;
-  margin: 20px auto 0;
-  padding: 5px 15px;
-  background: #f0f0f0;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  cursor: pointer;
+.closeButton:hover {
+  background: #e0e0e0;
 }
