@@ -4,7 +4,9 @@
     "paths": {
       "@pages/*": ["pages/*"],
       "@services/*": ["services/*"],
-      "@components/*": ["components/*"]
+      "@components/*": ["components/*"],
+      "@auth/*": ["auth/*"],
+      "@hocs/*": ["hocs/*"]
     },
     "target": "es5",
     "lib": [

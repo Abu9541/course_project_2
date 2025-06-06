@@ -17,10 +17,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from movies.views import MovieViewSet
+from movies.views import MovieViewSet, UserViewSet, CustomTokenObtainPairView, RegisterView
+
 
 router = DefaultRouter()
 router.register(r'movies', MovieViewSet, basename='movies')  # Добавьте basename
+router.register(r'users', UserViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -29,4 +31,6 @@ urlpatterns = [
     path('api/movies/filter/',
          MovieViewSet.as_view({'get': 'filtered'}),
          name='movies-filter'),
+    path('api/auth/login/', CustomTokenObtainPairView.as_view(), name='login'),
+    path('api/auth/register/', RegisterView.as_view(), name='register'),
 ]

@@ -1,3 +1,4 @@
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 
@@ -20,3 +21,8 @@ class Movie(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class User(AbstractUser):
+    favorite_movies = models.ManyToManyField('Movie', blank=True)
+    avatar = models.URLField(null=True, blank=True)
