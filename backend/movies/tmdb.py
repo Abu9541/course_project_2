@@ -3,6 +3,28 @@ from django.conf import settings
 from .models import Movie
 
 
+def get_age_rating(movie_id):
+    try:
+        release_url = f"https://api.themoviedb.org/3/movie/{movie_id}/release_dates?api_key={settings.TMDB_API_KEY}"
+        response = requests.get(release_url)
+        data = response.json()
+
+        # Ищем российский рейтинг (RU) или американский (US) в качестве fallback
+        for country in data.get('results', []):
+            if country['iso_3166_1'] == 'RU':
+                for release in country.get('release_dates', []):
+                    if release['certification']:
+                        return release['certification']
+            elif country['iso_3166_1'] == 'US':
+                for release in country.get('release_dates', []):
+                    if release['certification']:
+                        return release['certification']
+        return None
+    except Exception as e:
+        print(f"Ошибка при получении возрастного рейтинга для фильма {movie_id}: {e}")
+        return None
+
+
 def fetch_popular_movies():
     # Проверка существования таблицы
     from django.db import connection
@@ -45,8 +67,14 @@ def fetch_popular_movies():
                     'overview': movie_data['overview'],
                     'poster_path': f"https://image.tmdb.org/t/p/w500{movie_data['poster_path']}" if movie_data[
                         'poster_path'] else None,
+                    'backdrop_path': f"https://image.tmdb.org/t/p/original{movie_data['backdrop_path']}" if movie_data[
+                        'backdrop_path'] else None,
+                    'runtime': detail_data.get('runtime'),
                     'vote_average': movie_data['vote_average'],
-                    'genres': genres  # Сохраняем список жанров
+                    'vote_count': movie_data['vote_count'],
+                    'original_language': detail_data.get('original_language'),
+                    'genres': genres,
+                    'age_rating': get_age_rating(movie_data['id'])
                 }
             )
 

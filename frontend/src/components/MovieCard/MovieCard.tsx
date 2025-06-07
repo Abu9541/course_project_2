@@ -4,35 +4,32 @@ import styles from './MovieCard.module.css';
 
 interface MovieCardProps {
   movie: Movie;
-  onClick?: () => void;
+  onClick: () => void;
 }
 
 const MovieCard = ({ movie, onClick }: MovieCardProps) => {
-  // Анимация появления
-  const cardVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0 }
-  };
-
   return (
     <motion.div
+      layout
       className={styles.card}
-      variants={cardVariants}
-      initial="hidden"
-      animate="visible"
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.9 }}
       whileHover={{ scale: 1.03 }}
-      transition={{ duration: 0.3 }}
+      transition={{ duration: 0.3, type: "spring" }}
       onClick={onClick}
+      layoutId={`movie-${movie.id}`}
     >
       <div className={styles.posterContainer}>
         {movie.poster_path ? (
-          <img
+          <motion.img
             src={movie.poster_path}
             alt={movie.title}
             className={styles.poster}
             onError={(e) => {
               (e.target as HTMLImageElement).src = '/placeholder.jpg';
             }}
+            layoutId={`poster-${movie.id}`}
           />
         ) : (
           <div className={styles.posterPlaceholder}>No Image</div>
@@ -40,8 +37,10 @@ const MovieCard = ({ movie, onClick }: MovieCardProps) => {
       </div>
 
       <div className={styles.info}>
-        <h3 className={styles.title}>{movie.title}</h3>
-        <div className={styles.rating}>
+        <motion.h3 className={styles.title} layoutId={`title-${movie.id}`}>
+          {movie.title}
+        </motion.h3>
+        <motion.div className={styles.rating} layoutId={`rating-${movie.id}`}>
           {Array.from({ length: 5 }).map((_, i) => (
             <span
               key={i}
@@ -51,10 +50,10 @@ const MovieCard = ({ movie, onClick }: MovieCardProps) => {
             </span>
           ))}
           <span>({movie.vote_average.toFixed(1)})</span>
-        </div>
-        <div className={styles.genres}>
+        </motion.div>
+        <motion.div className={styles.genres} layoutId={`genres-${movie.id}`}>
           {movie.genres.slice(0, 3).join(', ')}
-        </div>
+        </motion.div>
       </div>
     </motion.div>
   );

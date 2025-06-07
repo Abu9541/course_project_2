@@ -10,6 +10,11 @@ class Movie(models.Model):
     release_date = models.CharField(max_length=10)
     vote_average = models.FloatField(verbose_name="Rating")
     genres = models.JSONField(default=list)
+    backdrop_path = models.CharField(max_length=200, null=True, blank=True)
+    runtime = models.IntegerField(null=True, blank=True)
+    vote_count = models.IntegerField(default=0)
+    original_language = models.CharField(max_length=10, null=True, blank=True)
+    age_rating = models.CharField(max_length=10, null=True, blank=True)
 
 
     @property

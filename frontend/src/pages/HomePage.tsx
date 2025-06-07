@@ -7,6 +7,8 @@ import { withAuth } from '@hocs/withAuth';
 import api from '@services/api';
 import styles from './HomePage.module.css';
 import { Movie } from '@services/types';
+import { MovieDetails} from "@components/MovieDetails/MovieDetails";
+import { AnimatePresence } from 'framer-motion';
 
 const ProtectedContent = withAuth(({ user }) => {
   return (
@@ -21,6 +23,7 @@ const HomePage = () => {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
   const [availableGenres, setAvailableGenres] = useState<string[]>([]);
+  const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
 
   // Загружаем список фильмов и жанров при монтировании
   useEffect(() => {
@@ -42,22 +45,23 @@ const HomePage = () => {
   }, []);
 
   const handleApplyFilters = async (filters: {
-    genres: string[];
-    minRating: number;
-    year?: string
-  }) => {
-    try {
-      const params = new URLSearchParams();
-      filters.genres.forEach(g => params.append('genre', g));
-      params.append('min_rating', filters.minRating.toString());
-      if (filters.year) params.append('year', filters.year);
+  genres: string[];
+  minRating: number;
+  year?: string
+}) => {
+  try {
+    const params = new URLSearchParams();
+    // Для каждого жанра добавляем отдельный параметр genre
+    filters.genres.forEach(g => params.append('genre', g));
+    params.append('min_rating', filters.minRating.toString());
+    if (filters.year) params.append('year', filters.year);
 
-      const data = await getFilteredMovies(params.toString());
-      setMovies(data);
-    } catch (error) {
-      console.error('Ошибка фильтрации:', error);
-    }
-  };
+    const data = await getFilteredMovies(params.toString());
+    setMovies(data);
+  } catch (error) {
+    console.error('Ошибка фильтрации:', error);
+  }
+};
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -106,14 +110,23 @@ const HomePage = () => {
         </header>
 
         <div className={styles.moviesGrid}>
-          {movies.map((movie) => (
-            <MovieCard
-              key={movie.id}
-              movie={movie}
-              onClick={() => console.log('Selected:', movie.title)}
-            />
-          ))}
-        </div>
+          <AnimatePresence mode="wait">
+            {movies.map((movie) => (
+              <MovieCard
+                key={movie.id}
+                movie={movie}
+                onClick={() => setSelectedMovie(movie)}
+              />
+            ))}
+            </AnimatePresence>
+      </div>
+
+      {selectedMovie && (
+        <MovieDetails
+          movie={selectedMovie}
+          onClose={() => setSelectedMovie(null)}
+        />
+      )}
 
         {movies.length === 0 && (
           <div className={styles.noResults}>

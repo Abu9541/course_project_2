@@ -1,0 +1,116 @@
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: #2c3e50;
+  border-radius: 10px;
+  max-width: 800px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+.closeButton {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #e94560;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  font-size: 20px;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.backdropContainer {
+  height: 200px;
+  overflow: hidden;
+}
+
+.backdrop {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.content {
+  display: flex;
+  padding: 20px;
+  gap: 20px;
+}
+
+.posterSide {
+  flex: 0 0 200px;
+}
+
+.poster {
+  width: 100%;
+  border-radius: 5px;
+}
+
+.infoSide {
+  flex: 1;
+  color: white;
+}
+
+.meta {
+  display: flex;
+  gap: 15px;
+  margin: 10px 0;
+  color: #bdc3c7;
+}
+
+.rating {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin: 15px 0;
+}
+
+.voteAverage {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #f1c40f;
+}
+
+.voteCount {
+  color: #bdc3c7;
+}
+
+.genres {
+  margin: 15px 0;
+  color: #bdc3c7;
+}
+
+.overview {
+  line-height: 1.5;
+  margin: 20px 0;
+}
+
+.addButton {
+  background: #e94560;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.addButton:hover {
+  background: #d9344f;
+}
