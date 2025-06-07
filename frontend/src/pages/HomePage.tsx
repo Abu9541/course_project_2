@@ -4,7 +4,6 @@ import MovieCard from '@components/MovieCard/MovieCard';
 import { FiltersPanel } from '@components/FiltersPanel/FiltersPanel';
 import { AuthModal } from '@components/AuthModal/AuthModal';
 import { withAuth } from '@hocs/withAuth';
-import api from '@services/api';
 import styles from './HomePage.module.css';
 import { Movie } from '@services/types';
 import { MovieDetails} from "@components/MovieDetails/MovieDetails";

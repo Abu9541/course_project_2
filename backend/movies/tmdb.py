@@ -37,7 +37,7 @@ def fetch_popular_movies():
     genre_dict = {g['id']: g['name'] for g in genres_data['genres']}
 
     # 2. Получаем популярные фильмы
-    movies_url = f"https://api.themoviedb.org/3/movie/popular?api_key={settings.TMDB_API_KEY}&language=ru-RU&page=3"
+    movies_url = f"https://api.themoviedb.org/3/movie/popular?api_key={settings.TMDB_API_KEY}&language=ru-RU&page=4"
 
     try:
         movies_response = requests.get(movies_url)

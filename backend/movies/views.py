@@ -1,4 +1,4 @@
-from rest_framework import generics, viewsets, status
+from rest_framework import viewsets, status
 from .models import Movie
 from .serializers import MovieSerializer, UserSerializer
 from rest_framework.decorators import action
