@@ -50,10 +50,6 @@ export const MovieDetails = ({ movie, onClose }: MovieDetailsProps) => {
             </div>
 
             <p className={styles.overview}>{movie.overview}</p>
-
-            <button className={styles.addButton}>
-              Добавить в избранное
-            </button>
           </div>
         </div>
       </div>
