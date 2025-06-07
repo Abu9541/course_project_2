@@ -21,11 +21,11 @@ class MovieViewSet(viewsets.ModelViewSet):
         genre = request.query_params.get('genre', '').lower()
         min_rating = float(request.query_params.get('min_rating', 0))
         genres = request.query_params.getlist('genre')
+        title = request.query_params.get('title')
 
         queryset = self.get_queryset()
 
         if genres:
-            # Фильтруем фильмы, которые содержат ВСЕ выбранные жанры
             queryset = [m for m in queryset if all(
                 g.lower() in [mg.lower() for mg in m.genres]
                 for g in genres
@@ -33,6 +33,9 @@ class MovieViewSet(viewsets.ModelViewSet):
 
         if year:
             queryset = [m for m in queryset if year in m.release_date]
+
+        if title:
+            queryset = [m for m in queryset if title.lower() in m.title.lower()]
 
         queryset = [m for m in queryset if m.vote_average >= min_rating]
 

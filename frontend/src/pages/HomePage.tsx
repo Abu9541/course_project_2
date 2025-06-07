@@ -24,6 +24,7 @@ const HomePage = () => {
   const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
   const [availableGenres, setAvailableGenres] = useState<string[]>([]);
   const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
+  const [searchTitle, setSearchTitle] = useState('');
 
   // Загружаем список фильмов и жанров при монтировании
   useEffect(() => {
@@ -55,6 +56,7 @@ const HomePage = () => {
     filters.genres.forEach(g => params.append('genre', g));
     params.append('min_rating', filters.minRating.toString());
     if (filters.year) params.append('year', filters.year);
+    if (searchTitle) params.append('title', searchTitle);
 
     const data = await getFilteredMovies(params.toString());
     setMovies(data);
@@ -62,6 +64,17 @@ const HomePage = () => {
     console.error('Ошибка фильтрации:', error);
   }
 };
+
+  const handleSearch = async () => {
+    try {
+      const params = new URLSearchParams();
+      if (searchTitle) params.append('title', searchTitle);
+      const data = await getFilteredMovies(params.toString());
+      setMovies(data);
+    } catch (error) {
+      console.error('Ошибка поиска:', error);
+    }
+  };
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -85,61 +98,71 @@ const HomePage = () => {
         onApply={handleApplyFilters}
         availableGenres={availableGenres}
       />
-
       <div className={styles.content}>
         <header className={styles.header}>
           {localStorage.getItem('token') ? (
-            <div className={styles.authSection}>
-              <ProtectedContent />
-              <button onClick={handleLogout} className={styles.authButtonClose}>
-                Выйти
-              </button>
-            </div>
+              <div className={styles.authSection}>
+                <ProtectedContent/>
+                <button onClick={handleLogout} className={styles.authButtonClose}>
+                  Выйти
+                </button>
+              </div>
           ) : (
-            <div className={styles.authSection}>
-              <span className={styles.userPanel}>Уже есть аккаунт? </span>
-              <button onClick={openLogin} className={styles.authButton}>
-                Войдите
-              </button>
-              <span className={styles.userPanel}>Ещё нет? Тогда самое время</span>
-              <button onClick={openRegister} className={styles.authButton}>
-                Зарегистрироваться
-              </button>
-            </div>
+              <div className={styles.authSection}>
+                <span className={styles.userPanel}>Уже есть аккаунт? </span>
+                <button onClick={openLogin} className={styles.authButton}>
+                  Войдите
+                </button>
+                <span className={styles.userPanel}>Ещё нет? Тогда самое время</span>
+                <button onClick={openRegister} className={styles.authButton}>
+                  Зарегистрироваться
+                </button>
+              </div>
           )}
         </header>
-
+        <div className={styles.searchContainer}>
+          <input
+              type="text"
+              value={searchTitle}
+              onChange={(e) => setSearchTitle(e.target.value)}
+              placeholder="Поиск по названию фильма"
+              className={styles.searchInput}
+          />
+          <button onClick={handleSearch} className={styles.searchButton}>
+            Найти
+          </button>
+        </div>
         <div className={styles.moviesGrid}>
           <AnimatePresence mode="wait">
             {movies.map((movie) => (
-              <MovieCard
-                key={movie.id}
-                movie={movie}
-                onClick={() => setSelectedMovie(movie)}
-              />
+                <MovieCard
+                    key={movie.id}
+                    movie={movie}
+                    onClick={() => setSelectedMovie(movie)}
+                />
             ))}
-            </AnimatePresence>
-      </div>
+          </AnimatePresence>
+        </div>
 
-      {selectedMovie && (
-        <MovieDetails
-          movie={selectedMovie}
-          onClose={() => setSelectedMovie(null)}
-        />
-      )}
+        {selectedMovie && (
+            <MovieDetails
+                movie={selectedMovie}
+                onClose={() => setSelectedMovie(null)}
+            />
+        )}
 
         {movies.length === 0 && (
-          <div className={styles.noResults}>
-            Фильмы не найдены. Измените параметры фильтрации.
-          </div>
+            <div className={styles.noResults}>
+              Фильмы не найдены. Измените параметры фильтрации.
+            </div>
         )}
       </div>
 
       {showAuthModal && (
-        <AuthModal
-          initialMode={authMode}
-          onClose={() => setShowAuthModal(false)}
-        />
+          <AuthModal
+              initialMode={authMode}
+              onClose={() => setShowAuthModal(false)}
+          />
       )}
     </div>
   );
